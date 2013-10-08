@@ -7,29 +7,6 @@
     <body>
         <script>
         
-        /*var svg = d3.select("body")
-                .append("svg")
-                .attr("width", 750)
-                .attr("height", 750)
-                .style("border", "1px solid black");
-
-        d3.select("svg").append("svg:image")
-        .attr("xlink:href", "mountain.svg")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 20)
-        .attr("height", 20);
-
-        /*var imgs = svg.selectAll("img").data([0]);
-
-        imgs.enter()
-        .append("svg:image")
-        .attr("xlink:href", "mountain.svg")
-        .attr("x", 60)
-        .attr("y", 60)
-        .attr("width", 500)
-        .attr("height", 500);*/
-        
         var arreglo = [{"nombre":"chuchita", "meta":20},{"nombre":"alberto", "meta":30},{"nombre":"emperador carlo magno","meta":40},{"nombre":"Juan Banana","meta":70}];
 
         var nombres = arreglo.map(function(d){return d.nombre;});
@@ -58,7 +35,35 @@
                 .append("svg")
                     .attr("width", 750)
                     .attr("height", 750);
-                    
+
+        var pos = 0;
+        var wanterior = 0;
+        var max_x = 0;
+        
+        svgViewport.selectAll("image").data(metas)
+        .enter().append("svg:image")
+        .attr("xlink:href", "mountain.svg")
+        .attr("x", function(d){
+            console.log(metas[2]);
+            if(wanterior<((height - y(d))*1.25)){
+                pos=pos+wanterior/2;
+                wanterior=((height - y(d))*1.25);
+                if(pos>max_x)max_x=pos+wanterior;
+                return pos;
+            }else{
+                pos=pos+wanterior-((height - y(d))*1.25)/2;
+                wanterior=((height - y(d))*1.25);
+                if(pos>max_x)max_x=pos+wanterior;
+                return pos;
+            }
+        })
+        .attr("y", function(d){return y(d);})
+        .attr("width", function(d){return (height - y(d))*1.25;})
+        .attr("height", function(d){return height - y(d);});
+        
+        d3.selectAll("body").selectAll("svg").attr("width",max_x);
+        x.rangeRoundBands([0,max_x],1);
+        console.log(max_x);
         svgViewport.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + "700" + ")")
@@ -68,39 +73,10 @@
                 .attr("class", "y axis")
                 .call(yAxis);
 
-        var pos = 0;
-        var wanterior = 0;
-        svgViewport.selectAll("image").data(metas).enter().append("svg:image")
-        .attr("xlink:href", "mountain.svg")
-        .attr("x", function(d){
-            if(wanterior<((height - y(d))*1.25)){
-                pos=pos+wanterior/2;
-                wanterior=((height - y(d))*1.25);
-                return pos;
-            }else{
-                pos=pos+wanterior-((height - y(d))*1.25)/2;
-                wanterior=((height - y(d))*1.25);
-                return pos;
-            }
-        })
-        .attr("y", function(d){return y(d);})
-        .attr("width", function(d){return (height - y(d))*1.25;})
-        .attr("height", function(d){return height - y(d);});
-        
-
         var lineQ = d3.select("body")
                 .append("svg")
                     .attr("width", 750)
-                    .attr("height", 750);
-        
-        svgViewport.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + "700" + ")")
-                .call(xAxis);
-
-        svgViewport.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);                    
+                    .attr("height", 750);               
         
         lineQ.selectAll("line").data(metas).enter().append("svg:line")
         .attr("class", "line")

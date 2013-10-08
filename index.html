@@ -74,6 +74,7 @@
 				var x = d3.scale.ordinal()
 					.domain(names.slice(0,5))
 					.rangeRoundBands([0,canvas_width],.5);
+
 				var y = d3.scale.linear()
 					.domain([0, maximo/1000])
 					.range([canvas_height,0]);
@@ -105,6 +106,7 @@
 				canvas.append("g")
 					.attr("class","x axis")
 					.attr("transform","translate(30,"+(canvas_height-23)+")")
+					.attr("position","realtive")
 					.call(xAxis);
 				
 				canvas.append("g")
@@ -117,7 +119,9 @@
 			            	.attr("dx", "1.0em")
 			            	.attr("dy", "-0.5em")
 			            	.attr("transform", String);
-			
+
+
+
 				//y-axis lines
 				var lines = y.ticks().slice(0,5);
 				console.log(lines);
@@ -148,7 +152,35 @@
 						})
 						.attr("stroke","lightgray")
 						.attr("stroke-width",0.5);
+				//mountains
+				var pos = 0;
+        		var last_width = 0;
+				canvas.selectAll("image").data(finalTarget)
+					.enter().append("svg:image")
+        			.attr("xlink:href", "mountain.svg")
+        			.attr("x", function(d){
+        				console.log(d/1000);
+            			if(last_width<((canvas_height - y(d/1000))*1.25)){
+                			pos=pos+last_width/2;
+			                last_width=((canvas_height - y(d/1000))*1.25);
+			                if(pos>canvas_width)canvas_width=pos+last_width;
+			                return pos;
+			            }else{
+			                pos=pos+last_width-((canvas_height - y(d/1000))*1.25)/2;
+			                last_width=((canvas_height - y(d/1000))*1.25);
+			                if(pos>canvas_width)canvas_width=pos+last_width;
+			                return pos;
+			            }
+			        	})
+			        .attr("y", function(d){return y(d/1000);})
+			        .attr("width", function(d){return (canvas_height - y(d/1000))*1.25;})
+			        .attr("height", function(d){return canvas_height - y(d/1000);});
+			    d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
+      			x.rangeRoundBands([0,canvas_width],1);
+				//
 			});
+
+				
 			
 		</script>
 		<div id="slider">
