@@ -40,148 +40,150 @@
 		</style>
 	</head>
 	<body>
-		<div id="grafica">
+		<div id="visualization">
 			<img src="./Taller%20Vertical/assets/background_full.svg">
 		</div>
+
 		<script type="text/javascript">
-			d3.json("team-performance.json", function(datos) {
-				//Medidas del canvas
-				var canvas_width = 940;
-				var canvas_height = 480;
-				//Getting json info
-				var names = new Array();
-				var finalTarget = new Array();
-				var goalStatus = new Array();
-				var maximo = 0;
-				for (var per = 0;per<datos.teamPerformance.length;per++){
-					finalTarget[per] = datos.teamPerformance[per].finalTarget;
-					names[per] = datos.teamPerformance[per].name;
-					goalStatus[per] = datos.teamPerformance[per].goalStatus;
-					for (var per_est = 0;per_est<datos.teamPerformance[per].data.length;per_est++){
-						//Type
-							//console.log(datos.teamPerformance[per].data[per_est].type);
-						//Date
-							//console.log(datos.teamPerformance[per].data[per_est].date);
-						//Amount
-							//console.log(datos.teamPerformance[per].data[per_est].amount);
-						if (datos.teamPerformance[per].data[per_est].amount > maximo) {
-							maximo = datos.teamPerformance[per].data[per_est].amount;
-						}
+		//Data
+		var canvas_width = 940;
+		var canvas_height = 480;
+		var names = new Array();
+		var finalTarget = new Array();
+		var goalStatus = new Array();
+		var max = 0;
+		var teamPerformance = new Array();
+		var margin;
+		var sX, sY;
+		var xAxis, yAxis;
+		var canvas;
+		var scale = 1000;
+
+		d3.json("team-performance.json", function (d){readJson(d);});
+
+		function readJson(datos) {
+			for (var  i= 0;i<datos.teamPerformance.length;i++){
+				finalTarget[i] = (datos.teamPerformance[i].finalTarget)/scale;
+				names[i] = datos.teamPerformance[i].name;
+				goalStatus[i] = datos.teamPerformance[i].goalStatus;
+				if (datos.teamPerformance[i].finalTarget > max) {
+						max = datos.teamPerformance[i].finalTarget;
+				}
+				for (var j = 0;j<datos.teamPerformance[i].data.length;j++){
+					//Type
+						//console.log(datos.teamPerformance[i].data[j].type);
+					//Date
+						//console.log(datos.teamPerformance[i].data[j].date);
+					//Amount
+						//console.log(datos.teamPerformance[i].data[j].amount);
+					if (datos.teamPerformance[i].data[j].amount > max) {
+						max = datos.teamPerformance[i].data[j].amount;
 					}
 				}
-				
-				//Scales
-				var x = d3.scale.ordinal()
-					.domain(names.slice(0,5))
-					.rangeRoundBands([0,canvas_width],.5);
+			}
+			max=(max/scale)+scale/10;
+			createAxis();
+		}
 
-				var y = d3.scale.linear()
-					.domain([0, maximo/1000])
-					.range([canvas_height,0]);
-				
-				//Axis
-				var xAxis = d3.svg.axis()
-					.scale(x)
-					.orient("bottom");
-				var yAxis = d3.svg.axis()
-					.scale(y)
-					.ticks(5)
-					.tickFormat(function(d){
-						return ("$"+d+" K");
-					})
-					.orient("left");
-				//Canvas ViewPort
-				var canvas_container = d3.select("body").append("div")
-					.attr("id","datos")
-					.style("position","relative")
-					.style("z-index",2)
-					.style("top",-480);
+		function createAxis(){
+			//Scales
+			sX = d3.scale.ordinal()
+				.domain(names.slice(0,5))
+				.rangeRoundBands([0,canvas_width],.5);
 
-				var canvas = canvas_container
-					.append("svg")
-						.attr("width",canvas_width)
-						.attr("height",canvas_height)
-					.data(datos.teamPerformance);
-
-				canvas.append("g")
-					.attr("class","x axis")
-					.attr("transform","translate(30,"+(canvas_height-23)+")")
-					.attr("position","realtive")
-					.call(xAxis);
-				
-				canvas.append("g")
-					.attr("class","y axis")
-					.attr("transform", "translate(40,0)")
-					.call(yAxis)
-						.selectAll("text")  
-			            	.style("text-anchor", "end")
-			            	.attr("text", "$"+String+"K")
-			            	.attr("dx", "1.0em")
-			            	.attr("dy", "-0.5em")
-			            	.attr("transform", String);
-
-
-
-				//y-axis lines
-				var lines = y.ticks().slice(0,5);
-				console.log(lines);
-				canvas.append("svg").selectAll("line.y")
-					.data(lines)
-					.enter().append("line")
-						.attr("x1",0)
-						.attr("y1",function(d){
-							return canvas_height-d;
-						})
-						.attr("x2",canvas_width)
-						.attr("y2",function(d){
-							return canvas_height-d;
-						})
-						.attr("stroke","lightgray")
-						.attr("stroke-width",0.5);
-
-				canvas.append("svg").selectAll("line.y")
-					.data(lines)
-					.enter().append("line")
-						.attr("x1",0)
-						.attr("y1", function(d){
-							return ((canvas_height-d)+50);
-						})
-						.attr("x2",canvas_width)
-						.attr("y2", function(d){
-							return ((canvas_height-d)+50);
-						})
-						.attr("stroke","lightgray")
-						.attr("stroke-width",0.5);
-				//mountains
-				var pos = 0;
-        		var last_width = 0;
-				canvas.selectAll("image").data(finalTarget)
-					.enter().append("svg:image")
-        			.attr("xlink:href", "mountain.svg")
-        			.attr("x", function(d){
-        				console.log(d/1000);
-            			if(last_width<((canvas_height - y(d/1000))*1.25)){
-                			pos=pos+last_width/2;
-			                last_width=((canvas_height - y(d/1000))*1.25);
-			                if(pos>canvas_width)canvas_width=pos+last_width;
-			                return pos;
-			            }else{
-			                pos=pos+last_width-((canvas_height - y(d/1000))*1.25)/2;
-			                last_width=((canvas_height - y(d/1000))*1.25);
-			                if(pos>canvas_width)canvas_width=pos+last_width;
-			                return pos;
-			            }
-			        	})
-			        .attr("y", function(d){return y(d/1000);})
-			        .attr("width", function(d){return (canvas_height - y(d/1000))*1.25;})
-			        .attr("height", function(d){return canvas_height - y(d/1000);});
-			    d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
-      			x.rangeRoundBands([0,canvas_width],1);
-				//
-			});
-
-				
+			sY = d3.scale.linear()
+				.domain([0, max])
+				.range([canvas_height,0]);
 			
+			//Axis
+			xAxis = d3.svg.axis()
+				.scale(sX)
+				.orient("bottom");
+			yAxis = d3.svg.axis()
+				.scale(sY)
+				//.ticks(5)
+				.tickFormat(function(d){
+					return ("$"+d+" K");
+				})
+				.orient("left");
+			createViewPort();
+		}
+
+		function createViewPort(){
+			canvas = d3.select("body").append("div")
+				.attr("id","datos")
+				.style("position","relative")
+				.style("top",-480)
+				.append("svg")
+					.attr("width",canvas_width)
+					.attr("height",canvas_height);
+
+			canvas.append("g")
+				.attr("class","x axis")
+				.attr("transform","translate(30,"+(canvas_height-23)+")")
+				.attr("position","realtive")
+				.call(xAxis);
+			
+			canvas.append("g")
+				.attr("class","y axis")
+				.attr("transform", "translate(40,0)")
+				.call(yAxis)
+					.selectAll("text")  
+		            	.style("text-anchor", "end")
+		            	.attr("text", "$"+String+"K")
+		            	.attr("dx", "1.0em")
+		            	.attr("dy", "-0.5em")
+		            	.attr("transform", String);
+
+		    graphicGrid();
+		}
+
+		function graphicGrid(){
+			canvas.append("svg").selectAll("line.y")
+				.data(sY.ticks())
+				.enter().append("line")
+					.attr("x1",0)
+					.attr("y1",function(d){
+						return sY(d);
+					})
+					.attr("x2",canvas_width)
+					.attr("y2",function(d){
+						return sY(d);
+					})
+					.attr("stroke","black")
+					.attr("stroke-width",0.5);
+				drawMountains();
+		}
+		
+		function drawMountains(){
+			var ps=0;
+			var last_width=0;
+			var tempArray=new Array();
+			for(var i=0;i<finalTarget.length;i++){
+
+				if(last_width<((canvas_height - sY(finalTarget[i]))*1.25)){
+	                ps=ps+last_width/2;
+	                last_width=((canvas_height - sY(finalTarget[i]))*1.25);
+					if(ps>canvas_width)canvas_width=ps+last_width;
+					tempArray[i]=ps;
+				}else{
+	                ps=ps+last_width-((canvas_height - sY(finalTarget[i]))*1.25)/2;
+	                last_width=((canvas_height - sY(finalTarget[i]))*1.25);
+					if(ps>canvas_width)canvas_width=ps+last_width;
+					tempArray[i]=ps;
+	            }
+			}
+			canvas.selectAll("image").data(finalTarget.reverse())
+				.enter().append("svg:image")
+    			.attr("xlink:href", "mountain.svg")
+    			.attr("x", function(d,i){return tempArray[(finalTarget.length-1)-i];})
+		        .attr("y", function(d){return sY(d);})
+		        .attr("width", function(d){return (canvas_height - sY(d))*1.25;})
+		        .attr("height", function(d){return canvas_height - sY(d);});
+		    d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
+  			sX.rangeRoundBands([0,canvas_width],1);
+		}
+		
 		</script>
 		<div id="slider">
 			<script>

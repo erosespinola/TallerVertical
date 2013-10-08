@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+    </head>
+    <body>
+        <script>
+        
+        var arreglo = [{"nombre":"Chuchita", "meta":20},{"nombre":"Alberto", "meta":30},{"nombre":"Emperador carlo magno","meta":40},{"nombre":"Juan Banana","meta":70}];
+		
+		var arreglo_ordenado=arreglo.sort(function(a,b){
+			return d3.ascending(a.nombre,b.nombre);
+		});
+		
+        var nombres = arreglo_ordenado.map(function(d){return d.nombre;});
+
+        var metas = arreglo_ordenado.map(function(d){return d.meta;});
+		
+
+        var height = 700;
+
+        var x = d3.scale.ordinal()
+                .domain(nombres)
+                .rangeRoundBands([0,700],1);
+
+        var y = d3.scale.linear()
+                .domain([0,100])
+                .range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("right");
+
+        var svgViewport = d3.select("body")
+                .append("svg")
+                    .attr("width", 750)
+                    .attr("height", 750);
+                    
+
+        //mountain
+
+		var ps=0;
+		var wr=0;
+		var max_x=0;
+		var arre=new Array();
+		for(var ing=0;ing<metas.length;ing++){
+			if(wr<((height - y(metas[ing]))*1.25)){
+                ps=ps+wr/2;
+                wr=((height - y(metas[ing]))*1.25);
+				if(ps>max_x)max_x=ps+wr;
+				arre[ing]=ps;
+			}else{
+                ps=ps+wr-((height - y(metas[ing]))*1.25)/2;
+                wr=((height - y(metas[ing]))*1.25);
+				if(ps>max_x)max_x=ps+wr;
+				arre[ing]=ps;
+            }
+		}
+
+        svgViewport.selectAll("image").data(metas.reverse()).enter().append("svg:image")
+        .attr("xlink:href", "mountain.svg")
+        .attr("x",function(d,i){ 
+			//console.log(arre[(metas.length-1)-i]); 
+			return arre[(metas.length-1)-i]; 
+		})
+        .attr("y", function(d){return y(d);})
+        .attr("width", function(d){return (height - y(d))*1.25;})
+        .attr("height", function(d){return height - y(d);});
+		
+	   ////////////////////////////////////////////////////////////////
+		
+		d3.selectAll("body").selectAll("svg").attr("width",max_x);
+        x.rangeRoundBands([0,max_x],1);
+        //console.log(max_x);
+        svgViewport.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + "700" + ")")
+                .call(xAxis);
+
+        svgViewport.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+        
+        </script>
+    </body>
+</html>
