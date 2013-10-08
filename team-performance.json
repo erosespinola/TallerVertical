@@ -1,0 +1,745 @@
+{
+    "success": true,
+    "teamPerformance": [
+        {
+            "name": "Aaliyah Henry",
+            "finalTarget": 330000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 58000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 311000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 312000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 330000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 330000
+                }
+            ]
+        },
+        {
+            "name": "Aaliyah Nelson",
+            "finalTarget": 250000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 89000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 233000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 235000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 250000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 250000
+                }
+            ]
+        },
+        {
+            "name": "Aaron Harmon",
+            "finalTarget": 540000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 340000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 460000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 528000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 540000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 540000
+                }
+            ]
+        },
+        {
+            "name": "Aaron Welch",
+            "finalTarget": 690000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 171000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 287000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 337000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 690000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 690000
+                }
+            ]
+        },
+        {
+            "name": "Abigail Carr",
+            "finalTarget": 380000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 333000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 379000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 379000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 380000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 380000
+                }
+            ]
+        },
+        {
+            "name": "Abigail Luna",
+            "finalTarget": 170000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 54000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 151000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 164000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 170000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 170000
+                }
+            ]
+        },
+        {
+            "name": "Adam Anderson",
+            "finalTarget": 950000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 168000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 935000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 948000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 950000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 950000
+                }
+            ]
+        },
+        {
+            "name": "Adam Benton",
+            "finalTarget": 170000,
+            "goalStatus": "exceed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 41000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 157000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 157000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 170000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 170000
+                }
+            ]
+        },
+        {
+            "name": "Addison Archer",
+            "finalTarget": 490000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 291000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 310000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 403000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 490000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 490000
+                }
+            ]
+        },
+        {
+            "name": "Addison Mitchell",
+            "finalTarget": 710000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 177000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 203000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 475000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 710000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 710000
+                }
+            ]
+        },
+        {
+            "name": "Adrian Keith",
+            "finalTarget": 620000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 18000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 52000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 276000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 620000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 620000
+                }
+            ]
+        },
+        {
+            "name": "Adrian Morgan",
+            "finalTarget": 390000,
+            "goalStatus": "met",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 46000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 96000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 354000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 390000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 390000
+                }
+            ]
+        },
+        {
+            "name": "Aiden Chambers",
+            "finalTarget": 350000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 178000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 263000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 305000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 350000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 350000
+                }
+            ]
+        },
+        {
+            "name": "Aiden Morgan",
+            "finalTarget": 630000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 479000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 541000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 609000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 630000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 630000
+                }
+            ]
+        },
+        {
+            "name": "Alex Barr",
+            "finalTarget": 860000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 151000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 306000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 569000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 860000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 860000
+                }
+            ]
+        },
+        {
+            "name": "Alex Gillespie",
+            "finalTarget": 700000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 323000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 421000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 559000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 700000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 700000
+                }
+            ]
+        },
+        {
+            "name": "Alexa Erickson",
+            "finalTarget": 760000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 671000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 736000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 758000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 760000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 760000
+                }
+            ]
+        },
+        {
+            "name": "Alexa Lopez",
+            "finalTarget": 820000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 593000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 611000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 698000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 820000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 820000
+                }
+            ]
+        },
+        {
+            "name": "Alexander Gardner",
+            "finalTarget": 900000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 487000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 895000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 900000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 900000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 900000
+                }
+            ]
+        },
+        {
+            "name": "Alexander Mann",
+            "finalTarget": 830000,
+            "goalStatus": "missed",
+            "data": [
+                {
+                    "type": "target",
+                    "date": "2013-01-01T23:15:30Z",
+                    "amount": 0
+                },
+                {
+                    "type": "target",
+                    "date": "2013-03-31T23:15:30Z",
+                    "amount": 159000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-06-30T23:15:30Z",
+                    "amount": 382000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-09-30T23:15:30Z",
+                    "amount": 391000
+                },
+                {
+                    "type": "target",
+                    "date": "2013-12-31T23:15:30Z",
+                    "amount": 830000
+                },
+                {
+                    "type": "actual",
+                    "date": "2013-09-04T16:00:53Z",
+                    "amount": 830000
+                }
+            ]
+        }
+    ]
+}

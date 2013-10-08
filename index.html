@@ -1,0 +1,158 @@
+<!DOCTYTPE HTML>
+<html>
+	<head>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<style type="text/css">
+			body {
+			  font: 10px sans-serif;
+			  margin: 0;
+			}
+			path.line {
+			  fill: none;
+			  stroke: #666;
+			  stroke-width: 1.5px;
+			}
+
+			path.area {
+			  fill: #e7e7e7;
+			}
+
+			.axis {
+			  shape-rendering: crispEdges;
+			}
+
+			.x.axis line {
+			  stroke: #fff;
+			}
+
+			.x.axis .minor {
+			  stroke-opacity: .5;
+			}
+
+			.x.axis path {
+			  display: none;
+			}
+
+			.x.axis line, .x.axis path, .y.axis line, .y.axis path {
+			  fill: none;
+			  stroke: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="grafica">
+			<img src="./Taller%20Vertical/assets/background_full.svg">
+		</div>
+		<script type="text/javascript">
+			d3.json("team-performance.json", function(datos) {
+				//Medidas del canvas
+				var canvas_width = 940;
+				var canvas_height = 480;
+				//Getting json info
+				var names = new Array();
+				var finalTarget = new Array();
+				var goalStatus = new Array();
+				var maximo = 0;
+				for (var per = 0;per<datos.teamPerformance.length;per++){
+					finalTarget[per] = datos.teamPerformance[per].finalTarget;
+					names[per] = datos.teamPerformance[per].name;
+					goalStatus[per] = datos.teamPerformance[per].goalStatus;
+					for (var per_est = 0;per_est<datos.teamPerformance[per].data.length;per_est++){
+						//Type
+							//console.log(datos.teamPerformance[per].data[per_est].type);
+						//Date
+							//console.log(datos.teamPerformance[per].data[per_est].date);
+						//Amount
+							//console.log(datos.teamPerformance[per].data[per_est].amount);
+						if (datos.teamPerformance[per].data[per_est].amount > maximo) {
+							maximo = datos.teamPerformance[per].data[per_est].amount;
+						}
+					}
+				}
+				
+				//Scales
+				var x = d3.scale.ordinal()
+					.domain(names.slice(0,5))
+					.rangeRoundBands([0,canvas_width],.5);
+				var y = d3.scale.linear()
+					.domain([0, maximo/1000])
+					.range([canvas_height,0]);
+				
+				//Axis
+				var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom");
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.ticks(5)
+					.tickFormat(function(d){
+						return ("$"+d+" K");
+					})
+					.orient("left");
+				//Canvas ViewPort
+				var canvas_container = d3.select("body").append("div")
+					.attr("id","datos")
+					.style("position","relative")
+					.style("z-index",2)
+					.style("top",-480);
+
+				var canvas = canvas_container
+					.append("svg")
+						.attr("width",canvas_width)
+						.attr("height",canvas_height)
+					.data(datos.teamPerformance);
+
+				canvas.append("g")
+					.attr("class","x axis")
+					.attr("transform","translate(30,"+(canvas_height-23)+")")
+					.call(xAxis);
+				
+				canvas.append("g")
+					.attr("class","y axis")
+					.attr("transform", "translate(40,0)")
+					.call(yAxis)
+						.selectAll("text")  
+			            	.style("text-anchor", "end")
+			            	.attr("text", "$"+String+"K")
+			            	.attr("dx", "1.0em")
+			            	.attr("dy", "-0.5em")
+			            	.attr("transform", String);
+			
+				//y-axis lines
+				var lines = y.ticks().slice(0,5);
+				console.log(lines);
+				canvas.append("svg").selectAll("line.y")
+					.data(lines)
+					.enter().append("line")
+						.attr("x1",0)
+						.attr("y1",function(d){
+							return canvas_height-d;
+						})
+						.attr("x2",canvas_width)
+						.attr("y2",function(d){
+							return canvas_height-d;
+						})
+						.attr("stroke","lightgray")
+						.attr("stroke-width",0.5);
+
+				canvas.append("svg").selectAll("line.y")
+					.data(lines)
+					.enter().append("line")
+						.attr("x1",0)
+						.attr("y1", function(d){
+							return ((canvas_height-d)+50);
+						})
+						.attr("x2",canvas_width)
+						.attr("y2", function(d){
+							return ((canvas_height-d)+50);
+						})
+						.attr("stroke","lightgray")
+						.attr("stroke-width",0.5);
+			});
+			
+		</script>
+		<div id="slider">
+			<script>
+		</div>
+	</body>
+</html>
