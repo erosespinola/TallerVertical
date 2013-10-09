@@ -4,7 +4,7 @@
 		<script src="http://d3js.org/d3.v3.min.js"></script>
 		<style type="text/css">
 			body {
-			  font: 10px sans-serif;
+			  font: 12px sans-serif;
 			  margin: 0;
 			}
 			path.line {
@@ -81,7 +81,7 @@
 					}
 				}
 			}
-			max=(max/scale)+scale/10;
+			max=(max/scale)+(Math.pow(10,(max.toString().length-4)));
 			createAxis();
 		}
 
@@ -105,7 +105,7 @@
 				.tickFormat(function(d){
 					return ("$"+d+" K");
 				})
-				.orient("left");
+				.orient("right");
 			createViewPort();
 		}
 
@@ -126,20 +126,17 @@
 			
 			canvas.append("g")
 				.attr("class","y axis")
-				.attr("transform", "translate(40,0)")
+				.attr("transform", "translate(0,0)")
 				.call(yAxis)
-					.selectAll("text")  
-		            	.style("text-anchor", "end")
-		            	.attr("text", "$"+String+"K")
-		            	.attr("dx", "1.0em")
-		            	.attr("dy", "-0.5em")
-		            	.attr("transform", String);
+					.selectAll("text")
+						.attr("dy", "-.5em");
 
 		    graphicGrid();
 		}
 
 		function graphicGrid(){
-			canvas.append("svg").selectAll("line.y")
+			console.log(sY.ticks());
+			canvas.append("svg").selectAll("line")
 				.data(sY.ticks())
 				.enter().append("line")
 					.attr("x1",0)
@@ -156,34 +153,44 @@
 		}
 		
 		function drawMountains(){
-			var ps=0;
-			var last_width=0;
-			var tempArray=new Array();
+			var ps = 0;
+			var last_width = 0;
+			var mountains = new Array();
 			for(var i=0;i<finalTarget.length;i++){
-
 				if(last_width<((canvas_height - sY(finalTarget[i]))*1.25)){
 	                ps=ps+last_width/2;
 	                last_width=((canvas_height - sY(finalTarget[i]))*1.25);
 					if(ps>canvas_width)canvas_width=ps+last_width;
-					tempArray[i]=ps;
+					mountains[i]=ps;
 				}else{
 	                ps=ps+last_width-((canvas_height - sY(finalTarget[i]))*1.25)/2;
 	                last_width=((canvas_height - sY(finalTarget[i]))*1.25);
 					if(ps>canvas_width)canvas_width=ps+last_width;
-					tempArray[i]=ps;
+					mountains[i]=ps;
 	            }
 			}
-			canvas.selectAll("image").data(finalTarget.reverse())
-				.enter().append("svg:image")
-    			.attr("xlink:href", "mountain.svg")
-    			.attr("x", function(d,i){return tempArray[(finalTarget.length-1)-i];})
-		        .attr("y", function(d){return sY(d);})
-		        .attr("width", function(d){return (canvas_height - sY(d))*1.25;})
-		        .attr("height", function(d){return canvas_height - sY(d);});
-		    d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
+			var finalTarget_reverse = finalTarget.reverse();
+			var names_reverse = names.reverse();
+			var x_text;
+			canvas.selectAll("image").data(finalTarget_reverse)
+				.enter()
+				.append("image")
+	    			.attr("xlink:href", "mountain.svg")
+	    			.attr("x", function(d,i){return mountains[(finalTarget.length-1)-i];})
+			        .attr("y", function(d){return sY(d);})
+			        .attr("width", function(d){return (canvas_height - sY(d))*1.25;})
+			        .attr("height", function(d){return canvas_height - sY(d);});
+			for(var i=0; i<names.length; i++){
+				x_text = mountains[(finalTarget.length-1)-i] + ((canvas_height - sY(finalTarget_reverse[i]))*1.25)/2;
+				canvas.append("text")
+					.attr("x", x_text)
+                	.attr("y", canvas_height-10)
+                	.attr("fill", "white")
+					.text(names_reverse[i].split(" ")[0]);
+			}
+			d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
   			sX.rangeRoundBands([0,canvas_width],1);
 		}
-		
 		</script>
 		<div id="slider">
 			<script>
