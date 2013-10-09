@@ -50,6 +50,7 @@
 		var canvas_height = 480;
 		var names = new Array();
 		var finalTarget = new Array();
+		var actualAmount = new Array();
 		var goalStatus = new Array();
 		var max = 0;
 		var teamPerformance = new Array();
@@ -71,11 +72,13 @@
 				}
 				for (var j = 0;j<datos.teamPerformance[i].data.length;j++){
 					//Type
-						//console.log(datos.teamPerformance[i].data[j].type);
+						if(datos.teamPerformance[i].data[j].type=="actual"){
+							//Amount
+							actualAmount[i] = (datos.teamPerformance[i].data[j].amount)/scale;
+						}
 					//Date
 						//console.log(datos.teamPerformance[i].data[j].date);
-					//Amount
-						//console.log(datos.teamPerformance[i].data[j].amount);
+					
 					if (datos.teamPerformance[i].data[j].amount > max) {
 						max = datos.teamPerformance[i].data[j].amount;
 					}
@@ -135,7 +138,6 @@
 		}
 
 		function graphicGrid(){
-			console.log(sY.ticks());
 			canvas.append("svg").selectAll("line")
 				.data(sY.ticks())
 				.enter().append("line")
@@ -147,11 +149,20 @@
 					.attr("y2",function(d){
 						return sY(d);
 					})
-					.attr("stroke","black")
+					.attr("stroke","lightgray")
 					.attr("stroke-width",0.5);
 				drawMountains();
 		}
 		
+		function generateColor() { 
+		    var codes = '0123456789ABCDEF'.split(""); 
+		    var result = '#';
+		    for (var i=0; i<6; i++ ) { 
+		        result += codes[Math.round(Math.random() * 15)]; 
+		    } 
+		        return result; 
+		}
+
 		function drawMountains(){
 			var ps = 0;
 			var last_width = 0;
@@ -169,10 +180,10 @@
 					mountains[i]=ps;
 	            }
 			}
-			var finalTarget_reverse = finalTarget.reverse();
-			var names_reverse = names.reverse();
+			finalTarget.reverse();
+			names.reverse();
 			var x_text;
-			canvas.selectAll("image").data(finalTarget_reverse)
+			canvas.selectAll("image").data(finalTarget)
 				.enter()
 				.append("image")
 	    			.attr("xlink:href", "mountain.svg")
@@ -181,15 +192,122 @@
 			        .attr("width", function(d){return (canvas_height - sY(d))*1.25;})
 			        .attr("height", function(d){return canvas_height - sY(d);});
 			for(var i=0; i<names.length; i++){
-				x_text = mountains[(finalTarget.length-1)-i] + ((canvas_height - sY(finalTarget_reverse[i]))*1.25)/2;
+				x_text = mountains[(finalTarget.length-1)-i] + ((canvas_height - sY(finalTarget[i]))*1.25)/2;
 				canvas.append("text")
 					.attr("x", x_text)
                 	.attr("y", canvas_height-10)
                 	.attr("fill", "white")
-					.text(names_reverse[i].split(" ")[0]);
+					.text(names[i]);
 			}
 			d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
   			sX.rangeRoundBands([0,canvas_width],1);
+
+  			drawSignals(mountains);
+			
+		}
+
+		function drawSignals(mountains){
+			var width_flag = 25;
+			var height_flag = 25;
+			var width_balloon = 55;
+			var height_balloon = 55;
+			for(var i=0; i<finalTarget.length ; i++){
+				var j = finalTarget.length-i-1;
+				if(finalTarget[j] == actualAmount[i]){
+					canvas
+						.append("svg:image")
+							.attr("xlink:href", "./Taller%20Vertical/assets/flag-annual-target.svg")
+							.attr("x",(((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+							.attr("y", sY(finalTarget[j])-width_flag)
+							.attr("width", width_flag)
+							.attr("height", height_flag);
+					canvas
+				 		.append("svg:g")
+                			.append("circle")
+                				.attr("cx", mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+                				.attr("cy", sY(actualAmount[i]))
+                				.attr("r", 7)
+                				.style("fill",generateColor());
+                    
+	                canvas
+	                	.append("svg:g")
+	                		.append("circle")
+	                			.attr("cx",  mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("r", 3)
+	                			.style("fill","white");
+				}
+				else if(finalTarget[j]<actualAmount[i]){
+					canvas
+						.append("svg:image")
+							.attr("xlink:href", "./Taller%20Vertical/assets/balloon.svg")
+							.attr("x",((((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])-(width_balloon/2))
+							.attr("y", (sY(finalTarget[j])-width_balloon)-(sY(finalTarget[j])-sY(actualAmount[i]))-10)
+							.attr("width", width_balloon)
+							.attr("height", height_balloon);
+					canvas
+						.append("line")
+						   	.attr("x1",(((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+							.attr("y1", sY(finalTarget[j]))
+							.attr("x2", (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+							.attr("y2",(sY(finalTarget[j])-width_balloon)-(sY(finalTarget[j])-sY(actualAmount[i]))+height_balloon)
+							.attr("stroke","black")
+							.attr("stroke-width",3);
+					canvas
+					 	.append("svg:g")
+	                		.append("circle")
+	                			.attr("cx", (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("r", 7)
+	                			.style("fill",generateColor());
+                    
+	                canvas
+	                	.append("svg:g")
+	                		.append("circle")
+	                			.attr("cx",  (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("r", 3)
+	                			.style("fill","white");
+				}
+				else {
+					var lines = 
+						canvas
+						.append("line")
+							.attr("x1",mountains[i])
+							.attr("y1",canvas_height)
+							.attr("x2",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+							.attr("y2",canvas_height)
+							.attr("stroke","white")
+							.attr("stroke-width",3)
+								.transition()
+			                	.delay(function() { return i * 100; })
+						   	.attr("x1",function(){
+						   		return mountains[i] + (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974); 
+						   	})
+							.attr("y1", sY(actualAmount[i]))
+							.attr("x2", function(){
+								return mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974);
+							})
+							.attr("y2", sY(actualAmount[i]))
+							.attr("stroke","white")
+							.attr("stroke-width",3);
+		            canvas
+					 	.append("svg:g")
+	                		.append("circle")
+	                			.attr("cx", mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("r", 7)
+	                			.style("fill",generateColor());
+                    
+                	canvas
+	                	.append("svg:g")
+	                		.append("circle")
+	                			.attr("cx",  mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("r", 3)
+	                			.style("fill","white");
+				}
+			}
 		}
 		</script>
 		<div id="slider">

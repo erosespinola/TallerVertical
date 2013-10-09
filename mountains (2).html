@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+    </head>
+    <body>
+        <script>
+        
+        var arreglo = [
+		{"nombre":"Chuchita", "meta":30,"actual":10},
+		{"nombre":"Alberto", "meta":50,"actual":70},
+		{"nombre":"Emperador carlo magno","meta":40,"actual":40},
+		{"nombre":"Juan Banana","meta":40,"actual":50}
+		];
+		
+		var arreglo_ordenado=arreglo.sort(function(a,b){
+			return d3.ascending(a.nombre,b.nombre);
+		});
+		
+        var nombres = arreglo_ordenado.map(function(d){return d.nombre;});
+
+        var metas = arreglo_ordenado.map(function(d){return d.meta;});
+		var actuales = arreglo_ordenado.map(function(d){return d.actual;});
+		
+
+        var height = 700;
+
+        var x = d3.scale.ordinal()
+                .domain(nombres)
+                .rangeRoundBands([0,700],1);
+
+        var y = d3.scale.linear()
+                .domain([0,100])
+                .range([height,0]);
+
+        var invy = d3.scale.linear()
+                .domain([0,100])
+                .range([ 0,height]);
+
+        var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("right");
+
+        var svgViewport = d3.select("body")
+                .append("svg")
+                    .attr("width", 750)
+                    .attr("height", 750);
+        //Desde aqui!!--------------------------------------------------------            
+		var ps=0;
+		var wr=0;
+		var max_x=0;
+		var arre=new Array();
+		for(var ing=0;ing<metas.length;ing++){
+			if(wr<((height - y(metas[ing]))*1.25)){
+                ps=ps+wr/2;
+                wr=((height - y(metas[ing]))*1.25);
+				if(ps>max_x)max_x=ps+wr;
+				arre[ing]=ps;
+			}else{
+                ps=ps+wr-((height - y(metas[ing]))*1.25)/2;
+                wr=((height - y(metas[ing]))*1.25);
+				if(ps>max_x)max_x=ps+wr;
+				arre[ing]=ps;
+            }
+		}		
+
+		for(var i = 0; i < arreglo_ordenado.length; i++){
+			svgViewport
+				.append("svg:image")
+				.attr("xlink:href", "mountain.svg")
+				.attr("x",arre[(metas.length-1)-i])
+				.attr("y",y(metas[metas.length-1-i]))
+				.attr("width",(height - y(metas[metas.length-1-i]))*1.25)
+				.attr("height",height - y(metas[metas.length-1-i]));
+			
+			svgViewport
+				.append("svg:image")
+				.attr("xlink:href", "./Taller%20Vertical/assets/mountain_verde.svg")
+				.attr("x",arre[(metas.length-1)-i])
+				.attr("y",y(metas[metas.length-1-i]))
+				.attr("width",(height - y(metas[metas.length-1-i]))*1.25)
+				.attr("height",height - y(metas[metas.length-1-i]))
+				.attr("clip-path","url(#cut-off-top"+i+")");
+			//console.log(arre[metas.length-1-i]);
+			//console.log(y(metas[metas.length-i-1]));
+			//console.log((height - y(metas[metas.length-i-1]))*1.25);
+			//console.log(height - y(metas[metas.length-i-1]));
+		}
+		
+
+		/*/Mountain blue
+        svgViewport.append("g").selectAll("image").data(metas.reverse()).enter().append("svg:image")
+			.attr("xlink:href", "mountain.svg")
+			.attr("x",function(d,i){ 
+				console.log(arre[(metas.length-1)-i]); 
+				return arre[(metas.length-1)-i]; 
+			})
+			.attr("y", function(d){console.log(y(d));return y(d);})
+			.attr("width", function(d){console.log((height - y(d))*1.25);return (height - y(d))*1.25;})
+			.attr("height", function(d){console.log(height - y(d));return height - y(d);});
+
+		//Mountain green modified
+		svgViewport.append("g").selectAll("image").data(arreglo_ordenado.reverse()).enter().append("svg:image")
+			.attr("xlink:href", "./Taller%20Vertical/assets/mountain_verde.svg")
+			.attr("x",function(d,i){
+				console.log(arre[(metas.length-1)-i]);  
+				return arre[(metas.length-1)-i]; 
+			})
+			.attr("y", function(d){console.log(y(d.meta));return y(d.meta);})
+			.attr("width", function(d){console.log((height - y(d.meta))*1.25);return (height - y(d.meta))*1.25;})
+			.attr("height", function(d){console.log(height - y(d.meta));return height - y(d.meta);})
+			.attr("clip-path",function(d,i){
+				var txt = "url(#cut-off-top"+i+")";
+				return txt;
+			});*/
+			
+		//flag
+		var tmp = 0;
+		var width_flag = 25;
+		var height_flag = 25;
+
+		var temp = 0;
+		var width_balloon = 55;
+		var height_balloon = 55;
+
+		for(var i=0; i<metas.length ; i++){
+				//Pone las banderas
+				if(metas[metas.length-i-1] == actuales[i]){
+					console.log("bandera!");
+
+					svgViewport
+						.append("svg:image")
+							.attr("xlink:href", "./Taller%20Vertical/assets/flag-annual-target.svg")
+							.attr("x",(((height - y(metas[metas.length-1-i]))*1.25)/2)+arre[i])
+							.attr("y", y(metas[metas.length-1-i])-width_flag)
+							.attr("width", width_flag)
+							.attr("height", height_flag);
+				}
+				//pone los globos
+				
+				else if(metas[metas.length-1-i]<actuales[i]){
+					console.log("sobrepasa");
+
+					svgViewport
+						.append("svg:image")
+							.attr("xlink:href", "./Taller%20Vertical/assets/balloon.svg")
+							.attr("x",((((height - y(metas[metas.length-1-i]))*1.25)/2)+arre[i])-(width_balloon/2))
+							.attr("y", (y(metas[metas.length-i-1])-width_balloon)-(y(metas[metas.length-i-1])-y(actuales[i])))
+							.attr("width", width_balloon)
+							.attr("height", height_balloon);
+						//lineas globo
+					svgViewport
+						.append("line")
+						   	.attr("x1",(((height - y(metas[metas.length-i-1]))*1.25)/2)+arre[i])
+							.attr("y1", y(metas[metas.length-i-1]))
+							.attr("x2", (((height - y(metas[metas.length-i-1]))*1.25)/2)+arre[i])
+							.attr("y2",(y(metas[metas.length-i-1])-width_balloon)-(y(metas[metas.length-i-1])-y(actuales[i]))+height_balloon)
+							.attr("stroke","black")
+							.attr("stroke-width",3);
+
+					}
+			}
+
+		//clip
+		svgViewport.append("g").selectAll("#cut-off-top").data(arreglo_ordenado).enter().append("clipPath")
+			.attr("id",function(d,i){
+				var txt = "cut-off-top"+i;
+				return txt;
+			})
+			.append("rect")
+				.attr("x",function(d,i){ 
+					return arre[(metas.length-1)-i]; 
+				})
+				.attr("y",function(d,i){
+					//console.log("Actual =>"+d.actual+"  Actual mod:"+((y(d.meta)-width_balloon)-y(d.actual)));
+					if(metas[metas.length-1-i]<actuales[i]){
+						return y(d.meta);
+					}else{
+						return (y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon;
+					}
+				})
+				.attr("width",function(d){return (height - y(d.meta))*1.25;})
+				.attr("height",function(d){
+					return height - y(d.meta);
+				});	
+		//line c/clip
+		arre.reverse();
+		var metas_reverse = metas.reverse();
+		svgViewport.append("g").selectAll(".line.clip").data(arreglo_ordenado.reverse()).enter().append("svg")
+			  .append("line")
+			   	.attr("x1",function(d,i){  
+					//console.log(arre[(metas.length-1)-i]);
+					//console.log((y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon);
+					//arre.reverse();
+					p=(y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon;	
+					console.log(p);
+					return (arre[(metas.length-1)-i])+((invy(d.meta)-width_balloon)-(invy(d.meta)-invy(d.actual))+height_balloon)/Math.tan(1.02974);
+					//return ((arre[(metas.length-1)-i])+((y(d.meta))/(Math.tan(1.02974)))); 
+				})
+				.attr("y1",function(d){
+					return (y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon;	
+				}) 
+				.attr("x2",function(d,i){  
+					//console.log(arre[(metas.length-1)-i]);
+					//console.log((y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon);
+					//arre.reverse();
+					//p=(y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon;	
+					//console.log("width "+);
+					
+					var x2 = arre[(metas.length-1)-i] + ((height - y(metas_reverse[i]))*1.25);
+					console.log(x2);
+					return x2;
+					//return (arre[(metas.length-1)-i])-((invy(d.meta)-width_balloon)-(invy(d.meta)-invy(d.actual))+height_balloon)/Math.tan(1.02974);
+					//return ((arre[(metas.length-1)-i])+((y(d.meta))/(Math.tan(1.02974)))); 
+				})
+				.attr("y2",function(d){
+					return (y(d.meta)-width_balloon)-(y(d.meta)-y(d.actual))+height_balloon;	
+				})
+				.attr("stroke","black")
+				.attr("stroke-width",3);
+		
+		//
+		
+		d3.selectAll("body").selectAll("svg").attr("width",max_x);
+        x.rangeRoundBands([0,max_x],1);
+        //console.log(max_x);
+        svgViewport.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + "700" + ")")
+                .call(xAxis);
+
+        svgViewport.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+        
+        
+        </script>
+    </body>
+</html>
