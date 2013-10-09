@@ -52,18 +52,20 @@
 		var finalTarget = new Array();
 		var actualAmount = new Array();
 		var goalStatus = new Array();
-		var max = 0;
 		var teamPerformance = new Array();
+		var quarter = new Array();
+		var max = 0;
 		var margin;
 		var sX, sY;
 		var xAxis, yAxis;
 		var canvas;
 		var scale = 1000;
 		var delay = 1100;
-
 		d3.json("team-performance.json", function (d){readJson(d);});
-
 		function readJson(datos) {
+			for(var j=0; j<datos.teamPerformance.length; j++){
+					quarter[j] = new Array();
+			}
 			for (var  i= 0;i<datos.teamPerformance.length;i++){
 				finalTarget[i] = (datos.teamPerformance[i].finalTarget)/scale;
 				names[i] = datos.teamPerformance[i].name;
@@ -73,12 +75,14 @@
 				}
 				for (var j = 0;j<datos.teamPerformance[i].data.length;j++){
 					//Type
-						if(datos.teamPerformance[i].data[j].type=="actual"){
-							//Amount
-							actualAmount[i] = (datos.teamPerformance[i].data[j].amount)/scale;
-						}
+					if(datos.teamPerformance[i].data[j].type=="actual"){
+						//Amount
+						actualAmount[i] = (datos.teamPerformance[i].data[j].amount)/scale;
+					} else {
+						quarter[i][j] = (datos.teamPerformance[i].data[j].amount)/scale;
+					}
 					//Date
-						//console.log(datos.teamPerformance[i].data[j].date);
+					//console.log(datos.teamPerformance[i].data[j].date);
 					
 					if (datos.teamPerformance[i].data[j].amount > max) {
 						max = datos.teamPerformance[i].data[j].amount;
@@ -100,9 +104,6 @@
 				.range([canvas_height,0]);
 			
 			//Axis
-			xAxis = d3.svg.axis()
-				.scale(sX)
-				.orient("bottom");
 			yAxis = d3.svg.axis()
 				.scale(sY)
 				//.ticks(5)
@@ -121,12 +122,6 @@
 				.append("svg")
 					.attr("width",canvas_width)
 					.attr("height",canvas_height);
-
-			canvas.append("g")
-				.attr("class","x axis")
-				.attr("transform","translate(30,"+(canvas_height-23)+")")
-				.attr("position","realtive")
-				.call(xAxis);
 			
 			canvas.append("g")
 				.attr("class","y axis")
@@ -183,6 +178,7 @@
 			}
 			finalTarget.reverse();
 			names.reverse();
+			actualAmount.reverse();
 			var x_text;
 			for(var k = 0; k < mountains.length; k++){
 				canvas.append("svg:image")
@@ -197,6 +193,22 @@
 			        .attr("y", sY(finalTarget[k]))
 			        .attr("width", (canvas_height - sY(finalTarget[k]))*1.25)
 			        .attr("height", canvas_height - sY(finalTarget[k]));
+			    if(actualAmount[k]<finalTarget[k]){
+					canvas.append("clipPath")
+					.attr("id",("cut-off-top"+k))
+					.append("rect")
+						.attr("x",mountains[(finalTarget.length-1)-k])
+						.attr("y",sY(actualAmount[k]))
+						.attr("width",(canvas_height - sY(finalTarget[k]))*1.25)
+						.attr("height",canvas_height - sY(finalTarget[k]));
+				}
+				canvas.append("svg:image")
+					.attr("xlink:href", "mountain_verde.svg")
+					.attr("x",mountains[(finalTarget.length-1)-k])
+					.attr("y", sY(finalTarget[k]))
+					.attr("width", (canvas_height - sY(finalTarget[k]))*1.25)
+					.attr("height", canvas_height - sY(finalTarget[k]))
+					.attr("clip-path","url(#cut-off-top"+k+")");
 			}
 			for(var i=0; i<names.length; i++){
 				x_text = mountains[(finalTarget.length-1)-i] + ((canvas_height - sY(finalTarget[i]))*1.25)/2;
@@ -208,7 +220,7 @@
 			}
 			d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
   			sX.rangeRoundBands([0,canvas_width],1);
-
+  			actualAmount.reverse();
   			drawSignals(mountains);
 			
 		}
@@ -220,6 +232,22 @@
 			var height_balloon = 55;
 			for(var i=0; i<finalTarget.length ; i++){
 				var j = finalTarget.length-i-1;
+				for(var k=1; k<quarter[i].length-1; k++){
+					canvas.append("g")
+					.append("line")
+						.attr("x1",function(){
+							return mountains[i] + (canvas_height-sY(quarter[i][k]))/Math.tan(1.02974); 
+						})
+						.attr("y1", sY(quarter[i][k]))
+						.attr("x2", function(){
+							return mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(quarter[i][k]))/Math.tan(1.02974);
+						})
+						.attr("y2", sY(quarter[i][k]))
+						.attr("stroke","white")
+						.attr("stroke-width",1)
+						.style("stroke-dasharray",("3,3"));
+				}
+				
 				if(finalTarget[j] == actualAmount[i]){
 					canvas
 						.append("svg:image")
@@ -338,6 +366,7 @@
 	                			.attr("r", 3);
 				}
 				else {
+
 					canvas
 					.append("line")
 						.attr("x1",mountains[i])
