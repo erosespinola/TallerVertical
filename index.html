@@ -59,6 +59,7 @@
 		var xAxis, yAxis;
 		var canvas;
 		var scale = 1000;
+		var delay = 1000;
 
 		d3.json("team-performance.json", function (d){readJson(d);});
 
@@ -183,14 +184,20 @@
 			finalTarget.reverse();
 			names.reverse();
 			var x_text;
-			canvas.selectAll("image").data(finalTarget)
-				.enter()
-				.append("image")
-	    			.attr("xlink:href", "mountain.svg")
-	    			.attr("x", function(d,i){return mountains[(finalTarget.length-1)-i];})
-			        .attr("y", function(d){return sY(d);})
-			        .attr("width", function(d){return (canvas_height - sY(d))*1.25;})
-			        .attr("height", function(d){return canvas_height - sY(d);});
+			for(var k = 0; k < mountains.length; k++){
+				canvas.append("svg:image")
+					.attr("xlink:href", "mountain.svg")
+					/*.attr("x", mountains[(finalTarget.length-1)-k])
+			        .attr("y", sY(finalTarget[k]))
+			        .attr("width", 0)
+			        .attr("height", 0)
+					.transition()
+					.delay(function(){return k*delay;})*/
+	    			.attr("x", mountains[(finalTarget.length-1)-k])
+			        .attr("y", sY(finalTarget[k]))
+			        .attr("width", (canvas_height - sY(finalTarget[k]))*1.25)
+			        .attr("height", canvas_height - sY(finalTarget[k]));
+			}
 			for(var i=0; i<names.length; i++){
 				x_text = mountains[(finalTarget.length-1)-i] + ((canvas_height - sY(finalTarget[i]))*1.25)/2;
 				canvas.append("text")
@@ -216,31 +223,72 @@
 				if(finalTarget[j] == actualAmount[i]){
 					canvas
 						.append("svg:image")
+							.attr("x",(((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+                			.attr("y",sY(finalTarget[j]))
+                			.attr("width",0)
+                			.attr("height",0)
+                			.transition()
+                			.delay(function(){return i * delay;})
 							.attr("xlink:href", "./Taller%20Vertical/assets/flag-annual-target.svg")
 							.attr("x",(((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
 							.attr("y", sY(finalTarget[j])-width_flag)
 							.attr("width", width_flag)
 							.attr("height", height_flag);
 					canvas
+						.append("line")
+							.attr("x1",mountains[i])
+							.attr("y1",canvas_height)
+							.attr("x2",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+							.attr("y2",canvas_height)
+							.attr("stroke","white")
+							.attr("stroke-width",3)
+								.transition()
+			                	.delay(function() { return i * delay; })
+						   	.attr("x1",function(){
+						   		return mountains[i] + (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974); 
+						   	})
+							.attr("y1", sY(actualAmount[i]))
+							.attr("x2", function(){
+								return mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974);
+							})
+							.attr("y2", sY(actualAmount[i]));
+					canvas
 				 		.append("svg:g")
-                			.append("circle")
-                				.attr("cx", mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
-                				.attr("cy", sY(actualAmount[i]))
-                				.attr("r", 7)
-                				.style("fill",generateColor());
+            			.append("circle")
+            				.attr("cx",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+                			.attr("cy",canvas_height)
+                			.attr("r",0)
+                			.style("fill",generateColor())
+                			.transition()
+                			.delay(function(){return i * delay;})
+            				.attr("cx", mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+            				.attr("cy", sY(actualAmount[i]))
+            				.attr("r", 7);
                     
 	                canvas
 	                	.append("svg:g")
-	                		.append("circle")
-	                			.attr("cx",  mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
-	                			.attr("cy", sY(actualAmount[i]))
-	                			.attr("r", 3)
-	                			.style("fill","white");
+                		.append("circle")
+                			.attr("cx",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+                			.attr("cy",canvas_height)
+                			.attr("r",0)
+                			.style("fill","white")
+                			.transition()
+                			.delay(function(){return i * delay;})
+                			.attr("cx",  mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+                			.attr("cy", sY(actualAmount[i]))
+                			.attr("r", 3);
+
 				}
 				else if(finalTarget[j]<actualAmount[i]){
 					canvas
 						.append("svg:image")
 							.attr("xlink:href", "./Taller%20Vertical/assets/balloon.svg")
+							.attr("x",((((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i]))
+							.attr("y",sY(finalTarget[j]))
+							.attr("width",0)
+							.attr("height",0)
+							.transition()
+							.delay(function(){return i*delay*1.5;})
 							.attr("x",((((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])-(width_balloon/2))
 							.attr("y", (sY(finalTarget[j])-width_balloon)-(sY(finalTarget[j])-sY(actualAmount[i]))-10)
 							.attr("width", width_balloon)
@@ -256,56 +304,87 @@
 					canvas
 					 	.append("svg:g")
 	                		.append("circle")
+	                			.attr("cx",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+	                			.attr("cy",canvas_height)
+	                			.attr("r",0)
+	                			.style("fill",generateColor())
+	                			.transition()
+	                			.delay(function(){return i * delay;})
 	                			.attr("cx", (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
-	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("cy", sY(finalTarget[j]))
 	                			.attr("r", 7)
-	                			.style("fill",generateColor());
+	                			.transition()
+	                			//.delay(function(){return i * delay;})
+	                			.attr("cx",  (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+	                			.attr("cy", sY(actualAmount[i]))
+	                			.attr("r", 7);
                     
 	                canvas
 	                	.append("svg:g")
 	                		.append("circle")
+	                			.attr("cx",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+	                			.attr("cy",canvas_height)
+	                			.attr("r",0)
+	                			.style("fill","white")
+	                			.transition()
+	                			.delay(function(){return i * delay;})
+	                			.attr("cx",  (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
+	                			.attr("cy", sY(finalTarget[j]))
+	                			.attr("r", 3)
+	                			.transition()
+	                			//.delay(function(){return i * delay;})
 	                			.attr("cx",  (((canvas_height - sY(finalTarget[j]))*1.25)/2)+mountains[i])
 	                			.attr("cy", sY(actualAmount[i]))
-	                			.attr("r", 3)
-	                			.style("fill","white");
+	                			.attr("r", 3);
 				}
 				else {
-					var lines = 
-						canvas
-						.append("line")
-							.attr("x1",mountains[i])
-							.attr("y1",canvas_height)
-							.attr("x2",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
-							.attr("y2",canvas_height)
-							.attr("stroke","white")
-							.attr("stroke-width",3)
-								.transition()
-			                	.delay(function() { return i * 100; })
-						   	.attr("x1",function(){
-						   		return mountains[i] + (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974); 
-						   	})
-							.attr("y1", sY(actualAmount[i]))
-							.attr("x2", function(){
-								return mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974);
-							})
-							.attr("y2", sY(actualAmount[i]))
-							.attr("stroke","white")
-							.attr("stroke-width",3);
+					canvas
+					.append("line")
+						.attr("x1",mountains[i])
+						.attr("y1",canvas_height)
+						.attr("x2",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+						.attr("y2",canvas_height)
+						.attr("stroke","white")
+						.attr("stroke-width",3)
+							.transition()
+		                	.delay(function() { return i * delay; })
+					   	.attr("x1",function(){
+					   		return mountains[i] + (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974); 
+					   	})
+						.attr("y1", sY(actualAmount[i]))
+						.attr("x2", function(){
+							return mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974);
+						})
+						.attr("y2", sY(actualAmount[i]))
+						.attr("stroke","white")
+						.attr("stroke-width",3);
 		            canvas
 					 	.append("svg:g")
-	                		.append("circle")
-	                			.attr("cx", mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
-	                			.attr("cy", sY(actualAmount[i]))
-	                			.attr("r", 7)
-	                			.style("fill",generateColor());
+                		.append("circle")
+                			.attr("cx",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+                			.attr("cy",canvas_height)
+                			.attr("r",0)
+                			.style("fill",generateColor())
+                			.transition()
+                			.delay(function(){return i * delay;})
+                			.attr("cx", mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+                			.attr("cy", sY(actualAmount[i]))
+                			.attr("r", 7)
+                			.style("fill",generateColor());
                     
                 	canvas
 	                	.append("svg:g")
-	                		.append("circle")
-	                			.attr("cx",  mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
-	                			.attr("cy", sY(actualAmount[i]))
-	                			.attr("r", 3)
-	                			.style("fill","white");
+                		.append("circle")
+                			.attr("cx",mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25))
+                			.attr("cy",canvas_height)
+                			.attr("r",0)
+                			.style("fill","white")
+                			.transition()
+                			.delay(function(){return i * delay;})
+                			.attr("cx",  mountains[i] + ((canvas_height - sY(finalTarget[j]))*1.25) - (canvas_height-sY(actualAmount[i]))/Math.tan(1.02974))
+                			.attr("cy", sY(actualAmount[i]))
+                			.attr("r", 3)
+                			.style("fill","white");
 				}
 			}
 		}
