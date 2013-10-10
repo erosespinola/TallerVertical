@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>
+        TeamPerformanceViz
+    </title>
+<link rel="stylesheet" type="text/css" href="Estilos.css">
+ <style type="text/css">
+    div.tooltip {
+      background-image:url(fondo.png);
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      border: solid 1px #666666;
+      min-width:250px;
+  }
+
+  </style>
+</head>
+<body>
+
+<div class="cover">
+</div>
+
+<div  align="center" style="padding-top:30px">
+<div id="grafico">
+    <script src="D3/d3.min.js" charset="utf-8"></script>
+    <script type="text/javascript">	
+    var h = 480;
+    var w = 940;
+    var datos = [];
+    var actual= [];
+    var names= [];
+    var cuatrimestres = [];
+    var length;
+    var maxDataPoint;
+
+    d3.json('target.json', read);
+
+    function randomColor() { 
+        var letters = '0123456789ABCDEF'.split(''); 
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) { 
+            color += letters[Math.round(Math.random() * 15)]; 
+        } 
+        return color; 
+    }
+
+    function read(jsondata) {
+        for(var i = 0; i < jsondata.teamPerformance.length; i++){
+            datos[i] = jsondata.teamPerformance[i].finalTarget;
+            actual[i]=jsondata.teamPerformance[i].data[jsondata.teamPerformance[i].data.length-1].amount;
+            names[i]=jsondata.teamPerformance[i].name;
+            cuatrimestres[i] = [];
+            for(var j = 1; j < jsondata.teamPerformance[i].data.length-1; j++){
+                cuatrimestres[i][j] = jsondata.teamPerformance[i].data[j].amount;
+            }
+        }
+        length=jsondata.teamPerformance.length;
+        escale();       
+    }
+
+    function escale(){
+        var minDataPoint = d3.min(datos);
+        if (d3.max(datos)>d3.max(actual)){
+            maxDataPoint = d3.max(datos);    
+        }
+        else{
+            maxDataPoint = d3.max(actual)*1.3;       
+        }
+        var linearScale = d3.scale.linear()
+        .domain([0,maxDataPoint])
+        .range([0,h]);
+        draw(linearScale);
+    }
+
+    function draw(linearScale){
+
+        var svg = d3.select("#grafico").append("svg");
+        var x = 0;
+        var separacion = 20;
+        var newFinalTarget = [];
+        var newActual= [];
+        var newCuatrimestres = [];
+        drawBackground(svg);
+        //Las montañas son dibujadas por otro método dentro de la función newData()
+        newData(svg, linearScale, x, separacion, newFinalTarget, newActual, newCuatrimestres);
+        
+    }//Termina funcion draw
+
+    function drawBackground(svg){
+        svg.attr("width", w)
+        .attr("height", h);
+        svg.append("image")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("xlink:href", "assets/background-mountains.svg");
+        svg.append("image")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("xlink:href", "assets/background-sky.svg");
+
+       var y = d3.scale.linear().domain([maxDataPoint,0]).range([0,h]);
+        svg.append("svg:svg")
+        svg.attr("height", h)
+        .attr("width", w)
+        var vis = svg.append("svg:g")
+        .attr("transform", "translate(50,0)")
+        var rules = vis.append("svg:g").classed("rules", true)
+        function make_y_axis() {
+        return d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(12)
+        }
+        rules.append("svg:g").classed("grid y_grid", true)
+        .call(make_y_axis()
+        .tickSize(-w,0,0)
+        .tickFormat("")
+        )
+        rules.append("svg:g").classed("labels y_labels", true)
+        .call(make_y_axis()
+        .tickSubdivide(0)
+        .tickSize(0, 10, 0)
+        )
+    }
+
+    function newData(svg, linearScale, x, separacion, newFinalTarget, newActual, newCuatrimestres){
+        for(var i = length-1; i >=0; i--){
+            newFinalTarget[i] = linearScale(datos[i]);
+            newActual[i] = linearScale(actual[i]);
+            x += newFinalTarget[i]*1.25-separacion;
+            
+            newCuatrimestres[i] = [];
+            //Escala las lineas de los cuatrimestres
+            for(var j = 1; j < cuatrimestres[i].length-1; j++){
+                newCuatrimestres[i][j] = linearScale(cuatrimestres[i][j]);
+            }
+        }
+        x+=separacion+50;
+        drawMountains(svg, x, separacion, newFinalTarget, newActual, newCuatrimestres);
+    }
+
+    function drawMountains(svg, x, separacion, newFinalTarget, newActual, newCuatrimestres){
+        for(var i = length-1; i >=0; i--){
+            svg.append("image")
+                .attr("width", 50)
+                .attr("height", 300)
+                .attr("x", -100)
+                .attr("y", 100)
+                .attr("id", "#nube")
+                .transition()
+                .delay(i*4000)
+                .duration(50500)
+                .attr("x", 5770)
+                .attr("y", 150)
+                .attr("xlink:href", "assets/cloud-01.svg");
+
+            svg.append("image")
+                .attr("width", 100)
+                .attr("height", 100)
+                .attr("x", -100)
+                .attr("y", 100)
+                .transition()
+                .delay(i*6000)
+                .duration(50500)
+                .attr("x", 5770)
+                .attr("y", 100)
+                .attr("xlink:href", "assets/cloud-02.svg");
+
+            svg.append("image")
+                .attr("width", newFinalTarget[i]*1.25)
+                .attr("height", newFinalTarget[i])
+                .attr("x", x-newFinalTarget[i]*1.25)
+                .attr("y", h-newFinalTarget[i])
+                .attr("meta", datos[i])
+                .attr("numero", i)
+                .on("click", mousemove)
+                .attr("cx", x-(newFinalTarget[i]*1.6))
+                .attr("cy", h-newActual[i]-195)
+                .attr("xlink:href", "assets/green-mountain.svg");
+
+            if(newActual[i]>newFinalTarget[i]){
+                    svg.append("image")
+                    .attr("width", 60)
+                    .attr("height", 84)
+                    .attr("x", x-(newFinalTarget[i]*1.25/2)-30)
+                    .attr("y", h-newActual[i]-84+200)
+                    .transition()
+                    .delay(210)
+                    .duration(1000) 
+                    .attr("y", h-newActual[i]-84)
+                    .attr("xlink:href", "assets/balloon.svg");
+                    
+                    
+
+                    svg.append("image")
+                    .attr("width", newFinalTarget[i]*1.25)
+                    .attr("height", newFinalTarget[i])
+                    .attr("x", x-newFinalTarget[i]*1.25)
+                    .attr("y", h-newFinalTarget[i])
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i])
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("height", newFinalTarget[i]-newActual[i])
+                    .attr("xlink:href", "assets/mountain.svg");
+
+                    svg.append("image")
+                    .attr("width", newFinalTarget[i]*1.25)
+                    .attr("height", newFinalTarget[i])
+                    .attr("x", x-newFinalTarget[i]*1.25)
+                    .attr("y", h-newFinalTarget[i])
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i]+15)
+                    .attr("xlink:href", "assets/TransMountain.svg");
+
+                    svg.append("line")
+                    .attr("x1", x-(newFinalTarget[i]*1.25/2))
+                    .attr("x2", x-(newFinalTarget[i]*1.25/2))
+                    .attr("y1", h-newFinalTarget[i])
+                    .attr("y2", h-newFinalTarget[i])
+                    .style("stroke-width", "2")
+                    .style("stroke", "white")
+                    .transition()
+                    .delay(300)
+                    .duration(1000) 
+                    .attr("y1", h-newFinalTarget[i])
+                    .attr("y2", h-newActual[i]+15);
+
+                    svg.append("svg:g")
+                    .append("circle")
+                    .attr("cx", x)
+                    .attr("cy", h  )
+                    .attr("r", 10)
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i]+15)
+                    .style("fill",randomColor());
+
+
+                    
+                    
+                   
+                    svg.append("svg:g")
+                    .append("circle")
+                    .attr("cx",  x)
+                    .attr("cy", h)
+                    .attr("r", 4)
+                    .style("fill","white")
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i]+15)
+
+                    
+                }
+
+            else if (newActual[i]==newFinalTarget[i]){
+                    
+
+                    svg.append("image")
+                    .attr("width", 37.193)
+                    .attr("height", 44.126)
+                    .attr("x", x-(newFinalTarget[i]*1.25/2))
+                    .attr("y", h-newFinalTarget[i]-44.126+100)
+                    .transition()
+                    .delay(200)
+                    .duration(1000) 
+                    .attr("y", h-newFinalTarget[i]-44.126)
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i])
+                    .attr("xlink:href", "assets/flag-annual-target.svg");
+
+
+
+                    svg.append("image")
+                    .attr("width", newFinalTarget[i]*1.25)
+                    .attr("height", newFinalTarget[i])
+                    .attr("x", x-newFinalTarget[i]*1.25)
+                    .attr("y", h-newFinalTarget[i])
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .attr("cx", x - (newActual[i])/1.6)
+                    .attr("cy", h-newActual[i])
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("height", newFinalTarget[i]-newActual[i])
+                    .attr("xlink:href", "assets/mountain.svg");
+
+                    svg.append("image")
+                    .attr("width", newFinalTarget[i]*1.25)
+                    .attr("height", newFinalTarget[i])
+                    .attr("x", x-newFinalTarget[i]*1.25)
+                    .attr("y", h-newFinalTarget[i])
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .attr("cx", x - (newActual[i])/1.6)
+                    .attr("cy", h-newActual[i])
+                    .attr("xlink:href", "assets/TransMountain.svg");
+
+                    svg.append("svg:g")
+                    .append("line")
+                    .attr("x1", x)
+                    .attr("x2", x - newFinalTarget[i]*1.25)  
+                    .attr("y1", h)
+                    .attr("y2", h)
+                    .style("stroke-width", "10")
+                    .style("stroke", "white")
+                    .transition()
+                    .delay(100)
+                    .duration(1000)
+                    .attr("x1", x  - (newActual[i])/1.6)
+                    .attr("y1", h - newActual[i])
+                    .attr("x2", x-newFinalTarget[i]*1.25+(newActual[i]/1.6))
+                    .attr("y2", h - newActual[i]);
+
+                    
+                    svg.append("svg:g")
+                    .append("circle")
+                    .attr("cx", x)
+                    .attr("cy", h)
+                    .attr("r", 10)
+                    .style("fill",randomColor())
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i])
+                    .style("fill",randomColor());
+                 
+                    
+                    svg.append("svg:g")
+                    .append("circle")
+                    .attr("cx",  x)
+                    .attr("cy", h)
+                    .attr("r", 4)
+                    .style("fill","white")
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("cx", x-(newFinalTarget[i]*1.25/2))
+                    .attr("cy", h-newActual[i]);
+                    
+                }
+            else{
+                svg.append("image")
+                    .attr("width", newFinalTarget[i]*1.25)
+                    .attr("height", newFinalTarget[i])
+                    .attr("x", x-newFinalTarget[i]*1.25)
+                    .attr("y", h-newFinalTarget[i])
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .attr("cx", x - (newActual[i])/1.6)
+                    .attr("cy", h-newActual[i])
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("height", newFinalTarget[i]-newActual[i])
+                    .attr("xlink:href", "assets/mountain.svg");
+                
+                svg.append("image")
+                    .attr("width", newFinalTarget[i]*1.25)
+                    .attr("height", newFinalTarget[i])
+                    .attr("x", x-newFinalTarget[i]*1.25)
+                    .attr("y", h-newFinalTarget[i])
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .attr("cx", x - (newActual[i])/1.6)
+                    .attr("cy", h-newActual[i])
+                    .attr("xlink:href", "assets/TransMountain.svg");    
+
+                svg.append("svg:g")
+                    .append("line")
+                    .attr("x1", x)
+                    .attr("x2", x - newFinalTarget[i]*1.25)  
+                    .attr("y1", h)
+                    .attr("y2", h)
+                    .style("stroke-width", "3")
+                    .style("stroke", "white")
+                    .transition()
+                    .delay(100)
+                    .duration(1000)
+                    .attr("x1", x  - (newActual[i])/1.6)
+                    .attr("y1", h - newActual[i])
+                    .attr("x2", x-newFinalTarget[i]*1.25+(newActual[i]/1.6))
+                    .attr("y2", h - newActual[i]);
+
+                svg.append("svg:g")
+                    .append("circle")
+                    .attr("cx",  x )
+                    .attr("cy", h)
+                    .attr("r", 10)
+                    .style("fill",randomColor())
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("cx",  x - (newActual[i])/1.6)
+                    .attr("cy", h-newActual[i])
+                    .style("fill",randomColor());
+                    
+                svg.append("svg:g")
+                    .append("circle")
+                    .attr("cx", x)
+                    .attr("cy", h)
+                    .attr("r", 5)
+                    .style("fill","white")
+                    .attr("numero", i)
+                    .on("click", mousemove)
+                    .transition()
+                    .delay(100)
+                    .duration(1000) 
+                    .attr("cx",  x - (newActual[i])/1.6)
+                    .attr("cy", h-newActual[i]);
+                
+                }
+            drawLines(svg, x, newFinalTarget, newCuatrimestres, i);
+            drawText(svg, x, i, newFinalTarget, newActual, separacion);
+            x -= newFinalTarget[i]*1.25-separacion;
+        }//Termina for principal
+    }
+
+    function drawLines(svg, x, newFinalTarget, newCuatrimestres, i){
+        for(var j = 1; j < cuatrimestres[i].length-1; j++){
+            //Animar lineas de cuatrimestres
+            svg.append("line")
+                .attr("x1", x)
+                .attr("x2", x - newFinalTarget[i]*1.25)  
+                .attr("y1", h)
+                .attr("y2", h)
+                .style("stroke-width", "2")
+                .style("stroke", "#FFA11C")
+                .transition()
+                .delay(100)
+                .duration(1000)
+                .attr("x1", x - (newCuatrimestres[i][j])/1.6)
+                .attr("y1", h - newCuatrimestres[i][j])
+                .attr("x2", x - (newCuatrimestres[i][j])/1.6 - (newFinalTarget[i] - newCuatrimestres[i][j])*1.25)
+                .attr("y2", h - newCuatrimestres[i][j])
+                .attr("numero", i)
+                //.on("mouseout", mouseout)
+                .style("stroke-dasharray", ("10"));
+        }
+    }
+
+    function drawText(svg, x, i, newFinalTarget, newActual, separacion){
+        var nombre= names[i];
+            var text = svg.append("text")
+            .text(function() {
+                var nomb =nombre.split(" ");
+                var string="";
+                if(nomb[0].length >= 5){
+                    string += nomb[0][0]+". ";
+                } 
+                else{
+                    string += nomb[0]+" ";  
+                }
+                for(var j=1; j<nomb.length;j++){
+                    string += nomb[j] + " " ;
+                }
+                return string;
+            })
+            .attr("x", function() {return x-(newFinalTarget[i]*1.25/2);})
+            .attr("text-anchor","middle")
+            .attr("y", h-separacion)
+            .attr("font-family","serif")
+            .attr("font-size","11")
+            .attr("numero", i)
+            .attr("fill", "white");
+    }
+
+    var div = d3.select("#grafico").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 1e-6);
+    
+    function mousemove() {
+        div.transition()
+            .duration(500)
+            .style("opacity", 1);
+		var ancho = (document.body.clientWidth);
+        var i = d3.select(this).attr("numero");
+        var last=actual[i]/1000;
+        var meta=datos[i]/1000;
+        var promedio=last/meta*100;
+	    var cx = d3.select(this).attr("cx");
+                var cy = d3.select(this).attr("cy");
+
+		if(ancho >940){
+			var origenX=(ancho-940)/2;
+		}else{
+			var origenX=0;
+		}
+		cx=cx/1;
+		cx+=origenX;
+
+	       cy -= 60;		
+	    if(cy < 180){
+	       cy += 190;
+        }
+        div
+        .html("<font size='6'><b>" + names[i] + "</font><br><font size='5'>Sales Performance</font><br><font size='2' color='#7c8185'>Attainment vs Annual Goal</font><br><br><font size='4' color='#38761d'>"+ last+"K</font></b> of <b><font size='4' color='#1c4587'>"+meta+"K</font><br><br><font size='2' color='#7c8185'>% of Annual Goal Met</font><br><font size='5' color='#38761d'>"+promedio.toFixed(2)+"%</font></b>")
+        .style("left", (cx) + "px")
+        .style("top", (cy) + "px");
+    } 
+     </script>
+ </div>
+ </div>
+  
+</body>
+</html>

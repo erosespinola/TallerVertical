@@ -60,8 +60,7 @@
 		var xAxis, yAxis;
 		var canvas;
 		var scale = 1000;
-		//var delay = 1100;
-		var delay = 0;
+		var delay = 1100;
 		var ratio = 1.25;
 		var angulo_radianes = 1.02974;
 		d3.json("team-performance.json", function (d){readJson(d);});
@@ -234,26 +233,6 @@
 						.attr("width",(canvas_height - sY(finalTarget[k]))*ratio)
 						.attr("height",canvas_height - sY(finalTarget[k]));
 				}
-				/*mountains.reverse();
-					canvas
-						.append("line")
-							.attr("x1",mountains[k])
-							.attr("y1",canvas_height)
-							.attr("x2",mountains[k] + ((canvas_height - sY(finalTarget[k]))*ratio))
-							.attr("y2",canvas_height)
-							.attr("stroke","white")
-							.attr("stroke-width",3)
-								.transition()
-			                	.delay(function() { return k * delay; })
-						   	.attr("x1",function(){
-						   		return mountains[k] + (canvas_height-sY(actualAmount[k]))/Math.tan(angulo_radianes); 
-						   	})
-							.attr("y1", sY(actualAmount[k]))
-							.attr("x2", function(){
-								return mountains[k] + ((canvas_height - sY(finalTarget[k]))*ratio) - (canvas_height-sY(actualAmount[k]))/Math.tan(angulo_radianes);
-							})
-							.attr("y2", sY(actualAmount[k]));
-				mountains.reverse();*/
 				canvas.append("svg:image")
 					.attr("xlink:href", "mountain_verde.svg")
 					.attr("x",mountains[(finalTarget.length-1)-k])
@@ -261,41 +240,6 @@
 					.attr("width", (canvas_height - sY(finalTarget[k]))*ratio)
 					.attr("height", canvas_height - sY(finalTarget[k]))
 					.attr("clip-path","url(#cut-off-top"+k+")");
-
-					var j = finalTarget.length-i-1;
-					var q = quarter[k].length-1;
-					for(var q=1; q<quarter[k].length-1; q++){
-						mountains.reverse();
-						quarter.reverse();
-						canvas.append("g")
-							.attr("id","line-dashed")
-						 .append("line")
-							.attr("x1",function(){
-								return mountains[k] + (canvas_height-sY(quarter[k][q]))/Math.tan(angulo_radianes); 
-							})
-							.attr("y1", sY(quarter[k][q]))
-							.attr("x2", function(){
-								console.log(sY(finalTarget[k]));
-								return mountains[k] + ((canvas_height - sY(finalTarget[k]))*ratio) - (canvas_height-sY(quarter[k][q]))/Math.tan(angulo_radianes);
-							})
-							.attr("y2", sY(quarter[k][q]))
-							.attr("stroke","white")
-							.attr("stroke-width",1)
-							.style("stroke-dasharray",("3,3"));
-						quarter.reverse();
-						mountains.reverse();
-
-						
-						//actualAmount.reverse();
-
-					
-					}
-					mountains.reverse();
-						drawSignals(mountains,k);
-					mountains.reverse();
-					
-				
-
 			}
 			for(var i=0; i<names.length; i++){
 				x_text = mountains[(finalTarget.length-1)-i] + ((canvas_height - sY(finalTarget[i]))*ratio)/2;
@@ -308,19 +252,18 @@
 			d3.selectAll("body").selectAll("svg").attr("width",canvas_width);
   			sX.rangeRoundBands([0,canvas_width],1);
   			actualAmount.reverse();
-  			//drawSignals(mountains);
+  			drawSignals(mountains);
 			
 		}
 
-		function drawSignals(mountains,i){
+		function drawSignals(mountains){
 			var width_flag = 25;
 			var height_flag = 25;
 			var width_balloon = 55;
 			var height_balloon = 55;
-			//for(var i=0; i<finalTarget.length ; i++){
-				var j = i;
-				//Ya esta acomodada en el ciclo de arriba
-				/*for(var k=1; k<quarter[i].length-1; k++){
+			for(var i=0; i<finalTarget.length ; i++){
+				var j = finalTarget.length-i-1;
+				for(var k=1; k<quarter[i].length-1; k++){
 					canvas.append("g")
 					.append("line")
 						.attr("x1",function(){
@@ -334,7 +277,7 @@
 						.attr("stroke","white")
 						.attr("stroke-width",1)
 						.style("stroke-dasharray",("3,3"));
-				}*/
+				}
 				
 				if(finalTarget[j] == actualAmount[i]){
 					canvas
@@ -350,7 +293,6 @@
 							.attr("y", sY(finalTarget[j])-width_flag)
 							.attr("width", width_flag)
 							.attr("height", height_flag);
-					
 					canvas
 						.append("line")
 							.attr("x1",mountains[i])
@@ -369,7 +311,6 @@
 								return mountains[i] + ((canvas_height - sY(finalTarget[j]))*ratio) - (canvas_height-sY(actualAmount[i]))/Math.tan(angulo_radianes);
 							})
 							.attr("y2", sY(actualAmount[i]));
-					
 					canvas
 				 		.append("svg:g")
             			.append("circle")
@@ -505,7 +446,7 @@
                 			.attr("r", 3)
                 			.style("fill","white");
 				}
-			//}
+			}
 		}
 		</script>
 		<div id="slider">
@@ -513,3 +454,18 @@
 		</div>
 	</body>
 </html>
+
+/*
+div.transition()
+	.duration(500)
+	.style("opacity", 1);
+
+	var average=actual_amount/final_target*100;
+
+	var x = d3.select(this).attr("x");
+		    var y = d3.select(this).attr("y");
+
+var div = d3.select("body").select("#datos").append("div")
+    		.attr("class", "tooltip")
+    		.style("opacity", 1e-6);
+		    */
